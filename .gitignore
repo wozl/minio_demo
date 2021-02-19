@@ -1,4 +1,4 @@
 .idea
 .mvn
-*.iml
+minio-client.iml
 .gitignore
