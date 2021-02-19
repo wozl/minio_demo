@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎体验minio</title>
+    <link rel="stylesheet" href="zui/css/zui.min.css" />
+    <link rel="stylesheet" href="zui/lib/uploader/zui.uploader.min.css" />
+    <link rel="stylesheet" href="zui/lib/datatable/zui.datatable.min.css" />
+    <script type="text/javascript" src="zui/lib/jquery/jquery-3.4.1.min.js" ></script>
+    <script type="text/javascript" src="zui/js/zui.min.js" ></script>
+    <script type="text/javascript" src="zui/lib/uploader/zui.uploader.min.js" ></script>
+    <script type="text/javascript" src="zui/lib/datatable/zui.datatable.min.js"></script>
+    <script src="zui/ckplayer/ckplayer.js" charset="utf-8" data-name="ckplayer" type="text/javascript"></script>
+</head>
+<body>
+<div class="input-group">
+    <select class="form-control" id="bucket_list">
+        <option value="0">请选择需要上传的目录</option>
+    </select>
+    <span class="input-group-btn">
+			   <button class="btn btn-success" type="button" data-toggle="modal" data-target="#tock"><i class="icon icon-plus"></i>新建目录</button>
+			</span>
+</div>
+
+<hr />
+<br />
+<div id='uploader' class="uploader">
+    <div class="uploader-message text-center">
+        <div class="content"></div>
+        <button type="button" class="close">×</button>
+    </div>
+    <div class="uploader-files file-list file-list-grid"></div>
+    <div>
+        <hr class="divider">
+        <div class="uploader-status pull-right text-muted"></div>
+        <button type="button" class="btn btn-link uploader-btn-browse"><i class="icon icon-plus"></i> 选择文件</button>
+        <button type="button" class="btn btn-link uploader-btn-start"><i class="icon icon-cloud-upload"></i> 开始上传</button>
+    </div>
+</div>
+<!-- 输入对话框-->
+<div class="modal fade" id="tock">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                <h4 class="modal-title">请输入新目录名称</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text"  id="bucket_name" style="width: 100%;" placeholder="请输入内容..."/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary"   onclick="create_bucket();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--分割线-->
+<br />
+<h3><i class="icon icon-list"></i>&nbsp;文件列表</h3>
+<hr />
+<!--选择要展示内容的文件夹-->
+<div>
+    <select id="chosen_list" data-placeholder="请选择需要展示内容的文件夹" class="chosen-select form-control" data-compact_search="true">
+
+    </select>
+</div>
+<hr />
+<!--文件列表区-->
+<div id="file_list">
+    <!--<p><i class="icon icon-spin icon-spinner"></i>加载中...</p>
+    <p><i class="icon icon-frown"></i>文件列表加载失败...</p>-->
+    <div id="del_list">
+        <!-- 多选删除区-->
+
+    </div>
+    <table class="table table-bordered table-auto" >
+        <thead>
+        <tr>
+            <th>文件名</th>
+            <th>大小</th>
+            <th>上传时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <tbody id="file_info">
+        <!--文件内容展示区 -->
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div>
+    <!--以下区域为各种弹出对话框 -->
+    <!-- 文件分享时间选择对话框 -->
+    <!-- 对话框HTML -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title">文件分享</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <label>天：</label>
+                        <select id="day">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                        </select>
+                        <label>小时：</label>
+                        <select id="hours">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                        </select>
+                        <label>分钟：</label>
+                        <select id="minutes">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                            <option value="16">16</option>
+                            <option value="17">17</option>
+                            <option value="18">18</option>
+                            <option value="19">19</option>
+                            <option value="20">20</option>
+                            <option value="21">21</option>
+                            <option value="22">22</option>
+                            <option value="23">23</option>
+                            <option value="24">24</option>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                            <option value="32">32</option>
+                            <option value="33">33</option>
+                            <option value="34">35</option>
+                            <option value="36">36</option>
+                            <option value="37">37</option>
+                            <option value="38">38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                            <option value="43">43</option>
+                            <option value="44">44</option>
+                            <option value="45">45</option>
+                            <option value="46">46</option>
+                            <option value="47">47</option>
+                            <option value="48">48</option>
+                            <option value="49">49</option>
+                            <option value="50">50</option>
+                            <option value="51">51</option>
+                            <option value="52">52</option>
+                            <option value="53">53</option>
+                            <option value="54">54</option>
+                            <option value="55">55</option>
+                            <option value="56">56</option>
+                            <option value="57">57</option>
+                            <option value="58">58</option>
+                            <option value="59">59</option>
+                        </select>
+                        <p class="text-warning">
+                            <i class="icon icon-warning-sign icon-2x"></i>&nbsp;
+                            <strong>注意：最大分享有效时间为<span class="text-danger">7天</span>，大于7天默认为<span class="text-danger">7天</span>。
+                                最小分享有效时间为<span class="text-danger">1分钟</span>，默认<span class="text-danger">1分钟</span>。</strong>
+                        </p>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn" ><a href="javascript:$('#myModal').modal('hide');" class="text-success">确定</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--文件分享外链弹出框 -->
+    <div class="modal fade" id="share_info">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title"><i class="icon icon-node"></i>&nbsp;分享外链</h4>
+                </div>
+                <div class="modal-body" id="share_url">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 图片显示框 -->
+    <div class="modal fade" id="image_box">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title">images</h4>
+                </div>
+                <div class="modal-body">
+                    <img src="" id="img_box"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--音乐播放框 -->
+    <div class="modal fade" id="audio_box">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title">music</h4>
+                </div>
+                <div class="modal-body">
+                    <audio controls="controls" preload  src=""  id="mu_box">您的浏览器不支持 audio 标签。</audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script type="text/javascript">
+
+    window.onload=function(){
+        load_bucket_list();
+    };
+
+    /*
+     *加载云对象存储可用列表
+     */
+    function load_bucket_list(){
+        $.ajax({
+            type:"post",
+            url:"/view/list",
+            beforeSend:function(){ //初始化下拉框
+                $('#bucket_list').html('<option value="0">请选择需要上传的目录</option>');
+                $('#chosen_list').html('<option value="defaule">请选择需要展示内容的文件夹</option>');
+                //document.getElementById("file_info").innerHTML='<p><i class="icon icon-spin icon-spinner"></i>加载中...</p>';
+                //$("#file_info tbody").html('<p><i class="icon icon-spin icon-spinner"></i>加载中...</p>');
+            },
+            data:{},
+            success:function(data){
+                data=JSON.parse(data);
+                if(data.code==200){
+                    new $.zui.Messager("可用上传目录列表已加载!", {
+                        type:'success',
+                        icon: 'ok-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                    list=data.data;
+                    for(var i=0;i<list.length;i++){
+                        $("#bucket_list").append('<option value="'+(i+1)+'">'+list[i].name+'</option>');
+                        $("#chosen_list").append('<option value="'+list[i].name+'">'+list[i].name+'</option>');
+
+                    }
+                }else{
+                    new $.zui.Messager("上传列表加载失败，请稍后再试!", {
+                        type:'danger',
+                        icon: 'exclamation-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+
+            },
+            error:function(){
+                new $.zui.Messager('获取上传目录失败，服务繁忙，请稍后刷新再试!', {
+                    type:'warning',
+                    icon: 'warning-sign',
+                    placement: 'top' // 定义显示位置
+                }).show();
+            }
+        });
+    };
+
+
+
+    /**
+     * 初始化文件上传组件
+     */
+    $("#uploader").uploader({
+        autoUpload:false, //关闭自动上传
+        responseHandler:function(responseObject,file){ //判断服务器返回信息是否上传成功
+            console.log(responseObject.response);//打印返回信息
+        },
+        chunk_size:0, //不使用分片上传文件
+        multipart:true, //使用multipart/form-data方式上传
+        multipart_params:function(){ //文件上传附加参数
+            var path;
+            if($('#bucket_list').select().val()==0){
+                path="";
+            }else{
+                path=$('#bucket_list option:selected').text();
+            }
+            return {bucket_path:path};
+        },
+        filters:{ //过滤器
+            max_file_size: '500mb',//设置最大允许上传的文件大小为500M
+            // 不允许上传重复文件,例如上传文件大小和名称一致时
+            prevent_duplicates: true
+        },
+        url:'/view/up' //上传请求路径
+    });
+
+    /*
+     * 创建新minio目录
+     */
+    function create_bucket(){
+        var name=$("#bucket_name").val().trim();
+        if(name.length>0){ //有输入值
+            $("#tock").modal({hide:true}); //隐藏对话框
+            $("#bucket_name").val()=="";
+            $.ajax({
+                type:"post",
+                url:"/view/create_bucket",
+                data:{"name":name},
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.code==-1){
+                        new $.zui.Messager(data.msg, {
+                            type:'danger',
+                            icon: 'exclamation-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                    }else if(data.code==1001){
+                        new $.zui.Messager(data.msg, {
+                            type:'warning',
+                            icon: 'warning-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                    }else{
+                        new $.zui.Messager(data.msg, {
+                            type:'success',
+                            icon: 'ok-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                        setTimeout(function(){ //延迟1.5秒更新上传目录列表
+                            load_bucket_list();
+                        },1500);
+                    }
+                },
+                error:function(){
+                    new $.zui.Messager("网络繁忙，请稍后再试!", {
+                        type:'danger',
+                        icon: 'exclamation-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+            });
+        }else{ //无输入值，提示错误
+            new $.zui.Messager('输入内容不能为空!', {
+                type:'warning',
+                icon: 'warning-sign',
+                placement: 'top' // 定义显示位置
+            }).show();
+        }
+
+    };
+
+    $('select.chosen-select').change(() => {  //监听显示文件详情的下拉框状态
+        console.log($('select.chosen-select').val()+"被选择，开始加载文件列表!");
+        if($('select.chosen-select').val()!="defaule"){
+            load_bucketInfo($('select.chosen-select').val());
+        }else{
+            console.log("默认数据!");
+        }
+    });
+
+    function load_bucketInfo(uri){ //加载桶中文件信息
+        if(uri!=null){
+            $.ajax({
+                type:'post',
+                url:'/view/bucketlist',
+                data:{"path":uri},
+                beforeSend:function(){
+                    $('#file_info').html('<p><i class="icon icon-spin icon-spinner"></i>加载中...</p>');
+                },
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.code==200){
+                        data=data.data;
+                        var list =[];
+                        for(var a in data){
+                            list.push(data[a]);
+                        }
+                        $('#file_info').html("");
+                        console.log(list[0].contentType);
+                        for(i=0;i<Object.keys(list).length;i++){
+                            console.log("ab");
+                            if(list[i].contentType.search("image") != -1){
+                                console.log("test");
+                                document.getElementById("file_info").innerHTML+='<tr>'+
+                                    '<td><i class="icon icon-file icon-smile"></i>'+list[i].name+'</td>'+
+                                    '<td>'+renderSize(list[i].length)+'</td>'+
+                                    '<td>'+GmtUtil(list[i].httpHeaders.date[0])+'</td>'+
+                                    '<td>'+
+                                    '<a href="javascript:void(0);" onclick="share_file(this)"  class="text-success"><i class="icon icon-node"></i></a>&nbsp;'+
+                                    '<a href="javascript:$.post("/view/getshareurl",{filename:'+list[i].name+'},function(result){if(result.code==200){image(url);}});"><i class="icon icon-picture"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="download(this);" class="text-info"><i class="icon icon-cloud-download"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="del_one(this);" class="text-warning"><i class="icon icon-trash"></i></a>'
+                                    +'</td>'+
+                                    +'</tr>';
+                            }else if(list[i].contentType.search("audio") != -1){
+                                document.getElementById("file_info").innerHTML+='<tr>'+
+                                    '<td><i class="icon icon-file icon-smile"></i>'+list[i].name+'</td>'+
+                                    '<td>'+renderSize(list[i].length)+'</td>'+
+                                    '<td>'+GmtUtil(list[i].httpHeaders.date[0])+'</td>'+
+                                    '<td>'+
+                                    '<a href="javascript:void(0);" onclick="share_file(this)"  class="text-success"><i class="icon icon-node"></i></a>&nbsp;'+
+                                    '<a href="javascript:$.post("/view/getshareurl",{filename:'+list[i].name+'},function(result){if(result.code==200){music(url);}});"><i class="icon icon-picture"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="download(this);" class="text-info"><i class="icon icon-cloud-download"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="del_one(this);" class="text-warning"><i class="icon icon-trash"></i></a>'
+                                    +'</td>'+
+                                    +'</tr>';
+                            }else if(list[i].contentType.search("video") != -1){
+                                document.getElementById("file_info").innerHTML+='<tr>'+
+                                    '<td><i class="icon icon-file icon-smile"></i>'+list[i].name+'</td>'+
+                                    '<td>'+renderSize(list[i].length)+'</td>'+
+                                    '<td>'+GmtUtil(list[i].httpHeaders.date[0])+'</td>'+
+                                    '<td>'+
+                                    '<a href="javascript:void(0);" onclick="share_file(this)"  class="text-success"><i class="icon icon-node"></i></a>&nbsp;'+
+                                    '<a href="javascript:$.post("/view/getshareurl",{filename:'+list[i].name+'},function(result){if(result.code==200){videos(url);}});"><i class="icon icon-picture"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="download(this);" class="text-info"><i class="icon icon-cloud-download"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="del_one(this);" class="text-warning"><i class="icon icon-trash"></i></a>'
+                                    +'</td>'+
+                                    +'</tr>';
+                            }else{
+                                console.log("a");
+                                document.getElementById("file_info").innerHTML+='<tr>'+
+                                    '<td><i class="icon icon-file icon-smile"></i>'+list[i].name+'</td>'+
+                                    '<td>'+renderSize(list[i].length)+'</td>'+
+                                    '<td>'+GmtUtil(list[i].httpHeaders.date[0])+'</td>'+
+                                    '<td>'+
+                                    '<a href="javascript:void(0);" onclick="share_file(this)"  class="text-success"><i class="icon icon-node"></i></a>&nbsp;'+
+                                    '<a href="javascript:;"><i class="icon icon-picture"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="download(this);" class="text-info"><i class="icon icon-cloud-download"></i></a>&nbsp;'+
+                                    '<a href="javascript:void(0);" onclick="del_one(this);" class="text-warning"><i class="icon icon-trash"></i></a>'
+                                    +'</td>'+
+                                    +'</tr>';
+                            }
+                        }
+                    }else{
+                        $('#file_info').html('<p><i class="icon icon-frown"></i>无数据</p>');
+                    }
+
+                },
+                error:function(){
+                    $('#file_list').html('<p><i class="icon icon-frown"></i>文件列表加载失败...</p>');
+                    new $.zui.Messager('文件列表加载失败,请稍后再试!', {
+                        type:'warning',
+                        con: 'warning-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+            });
+        }else{
+            console.error("路径为空,无法加载文件列表！");
+        }
+    };
+
+
+    function GmtUtil(str){ //时间格式化
+        var date = new Date(str);
+        var y =date.getFullYear();
+        var M =date.getMonth()+1;
+        M = M < 10 ? ('0' + M) : M;
+        var d =date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h =date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var m =date.getMinutes();
+        m = m < 10 ? ('0' + m) : m;
+        var s =date.getSeconds();
+        s = s < 10 ? ('0' + s) : s;
+        return y + '-' + M + '-' + d + ' ' +h + ':' + m + ':' + s;
+    };
+
+
+
+    /***
+     * 格式化文件大小的JS方法
+     * @param  filesize 文件的大小,传入的是一个bytes为单位的参数
+     * return 格式化后的值(bytes自适应转换到KB,MB,GB)
+     * 转载自:https://www.cnblogs.com/willingtolove/p/9409979.html
+     */
+    function renderSize(filesize){
+        if(null==filesize||filesize==''){
+            return "0 Bytes";
+        }
+        var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+        var index=0;
+        var srcsize = parseFloat(filesize);
+        index=Math.floor(Math.log(srcsize)/Math.log(1024));
+        var size =srcsize/Math.pow(1024,index);
+        size=size.toFixed(2);//保留的小数位数
+        return size+unitArr[index];
+    };
+
+    /**
+     * 初始化文件列表区
+     */
+    $('table.datatable').datatable({
+        checkable:true,  //启用多选按钮
+        checkByClickRow:false,  //点击当前行的任意位置即可选中当前行
+        fixedHeader:true,  //固定表格头部
+        fixedHeaderOffset:0 //表头距离页面顶部的距离
+    });
+
+
+    /**
+     * 监听表格行选中状态
+     */
+    $('table.datatable').datatable().on('checksChanged.zui.datatable',function(event){
+        //console.log(event.checks.checkedAll);//是否被全选
+        //console.log(event.checks.checks);//有选中时数组
+        var checks_list=event.checks.checks;
+        if(checks_list.length!=0){ //至少有一项被选中
+            $('#del_list').html("");
+            $('#del_list').html('<strong><a href="javascript:void(0);" onclick="del_checked()" class="text-danger"><i class="icon icon-trash"></i>&nbsp;删除所选文件</a></strong>');
+        }else{ //当前数据无被选中行
+            $('#del_list').html("");
+            console.log("未被选择");
+        }
+    });
+
+    /**
+     * 删除选中数据
+     */
+    function del_checked(){
+        // 获取数据表格实例对象
+        var myDatatable = $('table.datatable').data('zui.datatable');
+        // 获取行选中数据
+        var checksStatus = myDatatable.checks;
+        var checks_list=checksStatus.checks;
+        var tbody=$('#file_info').children("tr");
+        var del_list=[];
+        for(var i=0;i<checks_list.length;i++){
+            var filename=tbody.eq(i).find("td").eq(0).text(); //获取选择行的文件名
+            del_list.push(filename);
+        }
+        if(confirm("您确认删除所选数据吗？")){
+            $.ajax({
+                type:"post",
+                url:"/view/delfiles",
+                data:{"data":del_list},
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.code==200){
+                        new $.zui.Messager(data.msg, {
+                            type:'success',
+                            icon: 'ok-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                        setTimeout(function(){ //延迟1.5秒更新文件列表
+                            load_bucket_list($('select.chosen-select').val());
+                        },1500);
+                    }else{
+                        new $.zui.Messager(data.msg, {
+                            type:'danger',
+                            icon: 'exclamation-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                    }
+                },
+                error:function(){
+                    new $.zui.Messager("删除失败，请稍后再试!", {
+                        type:'danger',
+                        icon: 'exclamation-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+            });
+        }else{
+            alert("您已取消删除所选数据!");
+        }
+    };
+
+
+    function share_file(obj){//文件分享
+        var tr = obj.parentNode.parentNode; //获取当前节点的父节点信息
+        var file_name = tr.cells[1].innerText; //获取当前父节点中td的文件名信息
+        $('#myModal').modal('show','center'); //显示分享的对话框
+        $('#myModal').on('shown.zui.modal',function(){
+            console.log("对话框已经显示!");
+        });
+        $('#myModal').on('hide.zui.modal',function(){  //当点击确定是执行
+            console.log("对话框关闭中...");
+            var day=$('#day option:selected').val();
+            var hour=$('#hours option:selected').val();
+            var minute=$('#minutes option:selected').val();
+            $.ajax({
+                type:'post',
+                url:'/view/getshareurl',
+                data:{"filename":file_name,"day":day,"hours":hour,"minutes":minute},
+                beforeSend:function(){
+                    $('#share_url').html("");
+                },
+                success:function(data){
+                    data=JSON.parse(data);
+                    if(data.code==200){
+                        new $.zui.Messager("设置分享成功!", {
+                            type:'success',
+                            icon: 'ok-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                        $('#share_url').html('<p>'+data.url+'</p>')
+                        $('#share_info').modal('show','center');
+                    }else{
+                        new $.zui.Messager('文件分享失败，请稍后再试!', {
+                            type:'danger',
+                            icon: 'exclamation-sign',
+                            placement: 'top' // 定义显示位置
+                        }).show();
+                    }
+                },
+                error:function(){
+                    new $.zui.Messager('文件分享失败，请稍后再试!', {
+                        type:'warning',
+                        icon: 'warning-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+            });
+        });
+        $('#myModal').on('hidden.zui.modal',function(){ //当点击确定后或者取消后执行
+            console.log("对话框已关闭!");
+            //清除多选的数据，还原默认设置
+            $('#day').val('1');
+            $('#hours').val('0');
+            $('#minutes').val('0');
+        });
+    };
+
+    function videos(str){ //播放视频
+        var video_wd = new $.zui.ModalTrigger({
+            name:'vd',
+            position:'center',
+            type:'iframe',
+            url:str,
+            width:620,
+            height:470,
+            title:'video'
+        });
+        video_wd.show();
+        $('#vd').on('hidden.zui.modal',function(){
+            console.log("开始隐藏");
+            window.location.reload();
+        });
+    };
+
+    function image(str){ //显示图片
+        $('#image_box').modal('show','center');
+        $('#image_box').on('shown.zui.modal',function(){
+            $('#img_box').attr("src",str);
+        });
+    };
+
+    function music(str){ //播放音乐
+        $('#audio_box').modal('show','center');
+        $('#audio_box').on('shown.zui.modal',function(){
+            $('#mu_box').attr("src",str);
+        });
+
+
+    };
+
+    function download(obj){ //文件下载
+        var tr = obj.parentNode.parentNode; //获取当前节点的父节点信息
+        var file_name = tr.cells[1].innerText; //获取当前父节点中td的文件名信息
+        $.get('/view/downloadfiles',{filename:file_name}); //下载
+    };
+
+    function del_one(obj){ //删除单个文件
+        var tr = obj.parentNode.parentNode; //获取当前节点的父节点信息
+        var file_name = tr.cells[1].innerText; //获取当前父节点中td的文件名信息
+        $.ajax({
+            type:"post",
+            url:"/view/delfiles",
+            data:{"data":file_name},
+            success:function(data){
+                data=JSON.parse(data);
+                if(data.code==200){
+                    new $.zui.Messager(data.msg, {
+                        type:'success',
+                        icon: 'ok-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                    setTimeout(function(){ //延迟1.5秒更新文件列表
+                        load_bucket_list($('select.chosen-select').val());
+                    },1500);
+                }else{
+                    new $.zui.Messager(data.msg, {
+                        type:'danger',
+                        icon: 'exclamation-sign',
+                        placement: 'top' // 定义显示位置
+                    }).show();
+                }
+            },
+            error:function(){
+                new $.zui.Messager("删除失败，请稍后再试!", {
+                    type:'danger',
+                    icon: 'exclamation-sign',
+                    placement: 'top' // 定义显示位置
+                }).show();
+            }
+        });
+    };
+
+</script>
+</html>

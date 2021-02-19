@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>视频播放</title>
+    <script src="zui/ckplayer/ckplayer.js" charset="utf-8" data-name="ckplayer" type="text/javascript"></script>
+</head>
+<body>
+<!-- 视频播放容器-->
+<div class="video" style="width: 600px;height: 400px;"></div>
+</body>
+<script type="text/javascript">
+    //定义一个变量：videoObject，用来做为视频初始化配置
+    var videoObject = {
+        container: '.video', //“#”代表容器的ID，“.”或“”代表容器的class
+        variable: 'player', //播放函数名称，该属性必需设置，值等于下面的new ckplayer()的对象
+        loaded:'loadedHandler',//播放器加载完成后调用该函数
+        video: getUrl("url")//视频地址
+    };
+
+    var player = new ckplayer(videoObject);//初始化播放器
+
+    function loadedHandler(name){
+        //调用到该函数后说明播放器已加载成功，可以进行部分控制了。此时视频还没有加载完成，所以不能控制视频的播放，暂停，获取元数据等事件
+        player.addListener('loadedmetadata', loadedMetaDataHandler); //监听元数据
+    };
+
+    function loadedMetaDataHandler(name){
+        player.videoPlay();//控制视频播放
+    }
+    function getUrl(str){
+        var src=location.href;
+        src=src.replace("?","?&").split("&");
+        var val="";
+        for(i=1;i<src.length;i++){
+            if(src[i].indexOf(str+"=")==0){
+                val=src[i].replace(str+"=","");
+            }
+        }
+        return val;
+    };
+
+
+
+</script>
+</html>
